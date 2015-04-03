@@ -26,8 +26,6 @@ import view.MainUI;
  */
 public class Cinema {
 
-    
-    
     /**
      * @param args the command line arguments
      */

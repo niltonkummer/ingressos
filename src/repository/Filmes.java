@@ -19,12 +19,11 @@ public class Filmes {
 
     public Filmes() {
         filmes = new ArrayList<Filme>();
-
-        addFilme(new Filme(100, "Crepusculo", "Romance", "Uma menina vive um romance entre um vampiro e um lobo", 120, 14));
-        addFilme(new Filme(200, "Harry Potter", "Romance", "Um garoto vê sua vida mudar completamente quando descobre que é um bruxo", 120, 10));
-        addFilme(new Filme(300, "A origem", "Romance", "Os segredos de um sonho podem ser descobertor nesse filme", 240, 12));
-        addFilme(new Filme(400, "Matrix", "Ação", "Um homem sai da rotina tomando um decisão que vai mudar o seu mundo", 190, 16));
-
+        // Testes
+        // addFilme(new Filme(100, "Crepusculo", "Romance", "Uma menina vive um romance entre um vampiro e um lobo", 120, 14));
+        // addFilme(new Filme(200, "Harry Potter", "Romance", "Um garoto vê sua vida mudar completamente quando descobre que é um bruxo", 120, 10));
+        // addFilme(new Filme(300, "A origem", "Romance", "Os segredos de um sonho podem ser descobertor nesse filme", 240, 12));
+        // addFilme(new Filme(400, "Matrix", "Ação", "Um homem sai da rotina tomando um decisão que vai mudar o seu mundo", 190, 16));
     }
 
     public boolean addFilme(Filme filme) {
@@ -62,5 +61,9 @@ public class Filmes {
             }
         }
         return listRetorno;
+    }
+    
+    public boolean isEmpty() {
+        return filmes.isEmpty();
     }
 }

@@ -107,6 +107,10 @@ public class FilmesUI {
     }
 
     private void consultarFilmes(String substring) {
+        if (filmes.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
+            return;
+        }
         RowTable header = getHeader();
         ArrayList<RowTable> rows = new ArrayList<>();
         for (Filme filme : filmes.getListaFilmes()) {
@@ -123,6 +127,10 @@ public class FilmesUI {
     }
 
     private void listarFilmes() {
+        if (filmes.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
+            return;
+        }
         JOptionPane.showMessageDialog(null, getFilmesTable());
     }
     

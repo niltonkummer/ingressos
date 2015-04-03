@@ -151,7 +151,6 @@ public class SessaoUI {
 
         Sessao sessao = new Sessao(sala, filme, data, dataExp);
         sessoes.addSessao(sessao);
-        System.out.println(sala + " " + filme + " " + data);
         JOptionPane.showMessageDialog(null, "Sessão cadastrada!");
     }
 

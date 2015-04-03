@@ -38,7 +38,6 @@ public class Vendas {
 
         List<SessaoDia> list = ingressos.get(dateString);
         SessaoDia sd = getSessaoDia(list, ingresso.getSessao().getCodigo());
-        System.out.println("Sd: "+sd);
         if (InputParse.isNull(sd)) {
             sd = new SessaoDia(ingresso.getSessao(), ingresso.getData());
             list.add(sd);
@@ -100,7 +99,6 @@ public class Vendas {
     public List<SessaoDia> getIngressosPorDia(Date date) {
         List<SessaoDia> sessoesDia = new ArrayList<>();
         for (String dateString : ingressos.keySet()) {
-            System.out.println(dateString + " " + DateUtil.dateToString("dd/MM/yyyy", date));
             if (dateString.equals(DateUtil.dateToString("dd/MM/yyyy", date))) {
                 for (SessaoDia sessaoDia : ingressos.get(dateString)) {
                     sessoesDia.add(sessaoDia);

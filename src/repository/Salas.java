@@ -18,11 +18,11 @@ public class Salas {
 
     public Salas() {
         salas = new ArrayList<Sala>();
-        addSala(new Sala(1, 150));
-        addSala(new Sala(2, 150));
-        addSala(new Sala(3, 250));
-        addSala(new Sala(4, 200));
-        
+        // Testes
+        //addSala(new Sala(1, 4));
+        //addSala(new Sala(2, 4));
+        //addSala(new Sala(3, 4));
+        //addSala(new Sala(4, 4));
     }
 
     public boolean addSala(Sala sala) {
@@ -49,5 +49,9 @@ public class Salas {
             }
         }
         return null;
+    }
+    
+    public boolean isEmpty() {
+        return salas.isEmpty();
     }
 }

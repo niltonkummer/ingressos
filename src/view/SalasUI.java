@@ -78,10 +78,15 @@ public class SalasUI {
 
 
     private void listarSalas() {
+        if (salas.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Não existem salas cadastradas.");
+            return;
+        }
         JOptionPane.showMessageDialog(null, getSalasTable());
     }
     
     public List getSalasIds() {
+        
         ArrayList<String> rows = new ArrayList<>();
         for (Sala sala : salas.getListaSalas()) {
             String row = Integer.toString(sala.getNumero());
