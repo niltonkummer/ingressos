@@ -19,10 +19,10 @@ public class Salas {
     public Salas() {
         salas = new ArrayList<Sala>();
         // Testes
-        //addSala(new Sala(1, 4));
-        //addSala(new Sala(2, 4));
-        //addSala(new Sala(3, 4));
-        //addSala(new Sala(4, 4));
+        addSala(new Sala(1, 50));
+        addSala(new Sala(2, 50));
+        addSala(new Sala(3, 50));
+        addSala(new Sala(4, 50));
     }
 
     public boolean addSala(Sala sala) {

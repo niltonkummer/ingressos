@@ -6,16 +6,15 @@ package model;
  */
 public class Filme {
 
-    private static int codigoGerado = 0;
-    private int codigo;
+    private int id;
     private String nome;
     private String genero;
     private String sinopse;
     private int faixaEtaria;
     private long duracao;
 
-    public Filme(int codigo, String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
-        this.codigo = codigo;// generateCodigo();
+    public Filme(int id, String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
+        this.id = id;// generateCodigo();
         this.nome = nome;
         this.genero = genero;
         this.sinopse = sinopse;
@@ -23,13 +22,29 @@ public class Filme {
         this.faixaEtaria = faixaEtaria;
     }
 
+    public Filme(String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
+        this.id = id;// generateCodigo();
+        this.nome = nome;
+        this.genero = genero;
+        this.sinopse = sinopse;
+        this.duracao = duracao;
+        this.faixaEtaria = faixaEtaria;
+    }
+    
     /**
      * @return the codigo
      */
-    public int getCodigo() {
-        return codigo;
+    public int getId() {
+        return id;
     }
-
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     /**
      * @return the nome
      */
@@ -68,4 +83,6 @@ public class Filme {
     public int getFaixaEtaria() {
         return faixaEtaria;
     }
+
+    
 }

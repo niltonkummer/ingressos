@@ -63,7 +63,7 @@ public class Vendas {
         Filmes filmes = new Filmes();
         for (List<SessaoDia> list : ingressos.values()) {
             for (SessaoDia item : list){
-                if (!filmes.hasFilme(item.getSessao().getFilme().getCodigo())){
+                if (!filmes.hasFilme(item.getSessao().getFilme().getId())){
                     filmes.addFilme(item.getSessao().getFilme());
                 }
             }
@@ -76,8 +76,8 @@ public class Vendas {
         ArrayList<String> codigos = new ArrayList<>();
         for (List<SessaoDia> list : ingressos.values()) {
             for (SessaoDia item : list){
-                if (!codigos.contains(item.getSessao().getFilme().getCodigo())){
-                    codigos.add(Integer.toString(item.getSessao().getFilme().getCodigo()));
+                if (!codigos.contains(item.getSessao().getFilme().getId())){
+                    codigos.add(Integer.toString(item.getSessao().getFilme().getId()));
                 }
             }
         }
@@ -113,7 +113,7 @@ public class Vendas {
         List<SessaoDia> sessoesDia = new ArrayList<>();
         for (List<SessaoDia> sd : ingressos.values()) {
             for (SessaoDia sessaoDia : sd) {
-                if (sessaoDia.getSessao().getFilme().getCodigo() == codigo) {
+                if (sessaoDia.getSessao().getFilme().getId() == codigo) {
                     sessoesDia.add(sessaoDia);
                 }
             }

@@ -6,7 +6,6 @@
 package model;
 
 import java.util.Date;
-import repository.Sessoes;
 
 /**
  *
