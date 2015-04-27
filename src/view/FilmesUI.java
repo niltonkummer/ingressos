@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import model.Filme;
 import view.menu.FilmesMenu;
 import view.menu.MainMenu;
-import repository.Filmes;
 import utils.InputParse;
 import utils.table.ColumnTable;
 import utils.table.RowTable;
@@ -24,10 +23,10 @@ import view.menu.GlobalMenu;
  * @author niltonkummer
  */
 public class FilmesUI {
-
-    // private Filmes filmes;
-    public FilmesUI(Filmes filmes) {
-        // this.filmes = filmes;
+    private FilmeDaoMysql filmes ;
+    
+    public FilmesUI() {
+       filmes = new FilmeDaoMysql();
     }
 
     public void run() {
@@ -54,6 +53,11 @@ public class FilmesUI {
                     // Listar filmes
                     listarFilmes();
                     break;
+                case FilmesMenu.OP_DELETAR:
+                    // Listar filmes
+                    deletarFilme();
+                    break;   
+                 
                 case FilmesMenu.OP_SAIR:
                     System.out.println("Volta para o menu principal");
                     break;
@@ -65,8 +69,8 @@ public class FilmesUI {
     }
 
     private void cadastrarFilme() {
-        FilmeDaoMysql filmes = new FilmeDaoMysql();
-        String[] camposLabel = new String[]{FilmesMenu.LBL_CODIGO,
+        
+        String[] camposLabel = new String[]{
             FilmesMenu.LBL_NOME,
             FilmesMenu.LBL_GENERO,
             FilmesMenu.LBL_SINOPSE,
@@ -76,8 +80,8 @@ public class FilmesUI {
         for (String item : camposLabel) {
             String label = item + ":";
             String option = JOptionPane.showInputDialog(label);
-            if (item.equals(FilmesMenu.LBL_CODIGO)
-                    || item.equals(FilmesMenu.LBL_DURACAO)) {
+            if (item.equals(FilmesMenu.LBL_DURACAO)
+                    || item.equals(FilmesMenu.LBL_FAIXA_ETARIA)) {
                 boolean valid = false;
                 do {
                     if (InputParse.isNull(option)) {
@@ -90,13 +94,6 @@ public class FilmesUI {
                     }
                 } while (!valid);
 
-                if (item.equals(FilmesMenu.LBL_CODIGO)) {
-
-                    if (filmes.buscarPorId(Integer.parseInt(option)) != null) {
-                        JOptionPane.showMessageDialog(null, FilmesMenu.MSG_FILME_CADASTRADO);
-                        return;
-                    }
-                }
             }
             if (InputParse.isNull(option)) {
                 JOptionPane.showMessageDialog(null, "Cadastro de filme cancelado");
@@ -104,14 +101,35 @@ public class FilmesUI {
             }
             camposValue.add(option);
         }
-        filmes.inserir(new Filme(Integer.parseInt(camposValue.get(0)), camposValue.get(1),
-                camposValue.get(2), camposValue.get(3), Integer.parseInt(camposValue.get(4)),
-                Integer.parseInt(camposValue.get(5))));
+        filmes.inserir(new Filme(camposValue.get(0),
+                camposValue.get(1), camposValue.get(2), Integer.parseInt(camposValue.get(3)),
+                Integer.parseInt(camposValue.get(4))));
         JOptionPane.showMessageDialog(null, "Filme cadastrado!");
     }
-
+    
+    private void deletarFilme() {
+        List<Filme> lista = filmes.listar();
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
+            return;
+        }
+        List<String> list = getFilmesIds();
+        String option = (String) JOptionPane.showInputDialog(null,
+                "Escolha um filme para deletar:\n" + new FilmesUI().getFilmesTable(), "",
+                JOptionPane.QUESTION_MESSAGE, null,
+                list.toArray(),
+                list.get(0));
+        if (InputParse.isNull(option)) {
+            JOptionPane.showMessageDialog(null, "Deleção de filme interrompida.");
+            return;
+        }
+        
+        if (filmes.deletar(filmes.buscarPorId(Integer.parseInt(option)))) {
+            JOptionPane.showMessageDialog(null, "Filme removido do catálogo.");
+        }
+    }
+    
     private void consultarFilmes(String substring) {
-        FilmeDaoMysql filmes = new FilmeDaoMysql();
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
@@ -132,8 +150,7 @@ public class FilmesUI {
         }
     }
 
-    private void listarFilmes() {
-        FilmeDaoMysql filmes = new FilmeDaoMysql();
+    public void listarFilmes() {
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
@@ -142,8 +159,7 @@ public class FilmesUI {
         JOptionPane.showMessageDialog(null, getFilmesTable());
     }
 
-    public List getFilmesIds() {
-        FilmeDaoMysql filmes = new FilmeDaoMysql();
+    public List<String> getFilmesIds() {
         List<Filme> lista = filmes.listar();
         ArrayList<String> rows = new ArrayList<>();
         for (Filme filme : lista) {
@@ -155,7 +171,6 @@ public class FilmesUI {
     }
 
     public String getFilmesTable() {
-        FilmeDaoMysql filmes = new FilmeDaoMysql();
         List<Filme> lista = filmes.listar();
         RowTable header = getHeader();
         ArrayList<RowTable> rows = new ArrayList<>();

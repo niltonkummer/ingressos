@@ -1,7 +1,6 @@
 package dao;
 
-import conn.ConnectionFactory;
-import java.sql.Connection;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,23 +8,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Filme;
 
 /**
  *
  * @author niltonkummer
  */
-public class FilmeDaoMysql implements FilmeDao {
+public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
 
-    private Connection conexao;
-    private PreparedStatement comando;
+    private static final String idtabela = "idfilme";
     private static final String tabela = "filme";
 
     @Override
     public void inserir(Filme filme) {
         try {
             String sql = "INSERT INTO " + tabela + " "
-                    + "(nome,genero,sinopse,faixa_etaria,duracao) VALUES(?,?,?,?,?)";
+                    + "(nome,genero,sinopse,duracao,faixa_etaria) VALUES(?,?,?,?,?)";
             conectar(sql);
             comando = conexao.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -46,26 +45,29 @@ public class FilmeDaoMysql implements FilmeDao {
     }
 
     @Override
-    public void deletar(Filme filme) {
+    public boolean deletar(Filme filme) {
         try {
-            String sql = "DELETE FROM " + tabela + " WHERE id=?";
+            String sql = "DELETE FROM " + tabela + " WHERE " + idtabela + "=?";
             conectar(sql);
             comando.setInt(1, filme.getId());
             comando.executeUpdate();
             fecharConexao();
-
+            return true;
+        } catch (MySQLIntegrityConstraintViolationException e) {
+            JOptionPane.showMessageDialog(null, "Filme não pode ser removido pois já existe sessão vinculada");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     @Override
     public void atualizar(Filme filme) {
         try {
             String sql = "UPDATE " + tabela + " SET nome=?, genero=?, sinopse=?, "
-                    + "faixa_etaria=?, duracao=? WHERE id=?";
+                    + " duracao=?, faixa_etaria=? WHERE " + idtabela + "=?";
             conectar(sql);
             setAllFields(comando, filme);
             comando.setInt(5, filme.getId());
@@ -83,12 +85,12 @@ public class FilmeDaoMysql implements FilmeDao {
     public Filme buscarPorId(int id) {
         Filme filme = null;
         try {
-            String sql = "SELECT * FROM " + tabela + " WHERE idfilme=?";
+            String sql = "SELECT * FROM " + tabela + " WHERE " + idtabela + "=?";
             conectar(sql);
             comando.setInt(1, id);
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
-                filme = buildFilme(resultado);
+                filme = buildObject(resultado);
 
             }
             fecharConexao();
@@ -110,7 +112,7 @@ public class FilmeDaoMysql implements FilmeDao {
             comando.setString(1, "%" + nome + "%");
             ResultSet resultado = comando.executeQuery();
             while (resultado.next()) {
-                Filme filme = buildFilme(resultado);
+                Filme filme = buildObject(resultado);
                 listaFilmes.add(filme);
             }
             fecharConexao();
@@ -131,7 +133,7 @@ public class FilmeDaoMysql implements FilmeDao {
             conectar(sql);
             ResultSet resultado = comando.executeQuery();
             while (resultado.next()) {
-                Filme filme = buildFilme(resultado);
+                Filme filme = buildObject(resultado);
                 listaFilmes.add(filme);
             }
             fecharConexao();
@@ -152,7 +154,7 @@ public class FilmeDaoMysql implements FilmeDao {
         comando.setInt(5, filme.getFaixaEtaria());
     }
 
-    private Filme buildFilme(ResultSet resultado) throws SQLException {
+    private Filme buildObject(ResultSet resultado) throws SQLException {
         return new Filme(
                 resultado.getInt("idfilme"),
                 resultado.getString("nome"),
@@ -161,16 +163,6 @@ public class FilmeDaoMysql implements FilmeDao {
                 resultado.getInt("duracao"),
                 resultado.getInt("faixa_etaria")
         );
-    }
-
-    private void conectar(String sql) throws ClassNotFoundException, SQLException {
-        conexao = ConnectionFactory.getConnection();
-        comando = conexao.prepareStatement(sql);
-    }
-
-    private void fecharConexao() throws SQLException {
-        comando.close();
-        conexao.close();
     }
 
 }

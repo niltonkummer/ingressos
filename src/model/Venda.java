@@ -11,17 +11,25 @@ import java.util.Date;
  *
  * @author niltonkummer
  */
-public class SessaoDia {
+public class Venda {
 
     private Sessao sessao;
     private Date data;
     private int total;
 
-    public SessaoDia(Sessao sessao, Date data) {
+    public Venda(Sessao sessao, Date data) {
         this.sessao = sessao;
         this.data = data;
     }
 
+    public Venda(Sessao sessao, Date data, int total) {
+        this.sessao = sessao;
+        this.data = data;
+        this.total = total;
+    }
+    
+    
+    
     private boolean isLotado() {
         return this.total >= sessao.getSala().getCapacidade();
     }

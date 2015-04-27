@@ -14,16 +14,40 @@ import java.util.Date;
  * @author niltonkummer
  */
 public class DateUtil {
-    public static Date stringToHour(String hour) throws ParseException {
-        return(new SimpleDateFormat("HH:mm").parse(hour));
+    public static boolean stringToHour(String hour, Date retorno){
+       if(hour == null){
+			return false;
+		}
+        
+        return(isValidDate(hour,"HH:mm", retorno));
     }
     
     public static String dateToString(String format, Date data){
         return(new SimpleDateFormat(format).format(data));
     }
     
-    public static Date stringToDate(String data) throws ParseException
+    public static boolean stringToDate(String data, Date retorno) 
     {
-        return(new SimpleDateFormat("dd/MM/yyyy").parse(data));
+        if(data == null){
+			return false;
+		}
+        
+        return(isValidDate(data,"dd/MM/yyyy", retorno));
     }
+    
+    private static boolean isValidDate(String dateParam, String dateFormat, Date date){
+        SimpleDateFormat simpDateFormat = new SimpleDateFormat(dateFormat);
+		simpDateFormat.setLenient(false);
+ 
+		try {
+ 
+			date.setTime(simpDateFormat.parse(dateParam).getTime());
+			
+		} catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+		}
+ 
+		return true;
+	}
 }

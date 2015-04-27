@@ -5,15 +5,15 @@
  */
 package view;
 
+import dao.SessaoDaoMysql;
+import dao.VendaDaoMysql;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.Ingresso;
 import model.Sessao;
-import model.SessaoDia;
-import repository.Sessoes;
-import repository.Vendas;
+import model.Venda;
 import utils.DateUtil;
 import utils.InputParse;
 import utils.table.ColumnTable;
@@ -27,12 +27,12 @@ import view.menu.VendasMenu;
  */
 public class VendaUI {
 
-    private Vendas vendas;
-    private Sessoes sessoes;
+    private VendaDaoMysql vendas;
+    private SessaoDaoMysql sessoes;
 
-    public VendaUI(Vendas vendas, Sessoes sessoes) {
-        this.vendas = vendas;
-        this.sessoes = sessoes;
+    public VendaUI() {
+        this.vendas = new VendaDaoMysql();
+        this.sessoes = new SessaoDaoMysql();
     }
 
     public void run() {
@@ -56,10 +56,10 @@ public class VendaUI {
                 case VendasMenu.OP_LISTA_POR_DIA:
                     listarVendasPorDia();
                     break;
-                 case VendasMenu.OP_LISTA_POR_FILME:
+                case VendasMenu.OP_LISTA_POR_FILME:
                     listarVendasPorFilme();
-                    break;   
-                    
+                    break;
+
                 case VendasMenu.OP_SAIR:
                     System.out.println("Volta para o menu principal");
                     break;
@@ -71,7 +71,10 @@ public class VendaUI {
     }
 
     public void cadastrarVenda() {
-
+        if (!sessoes.temSessao()) {
+            JOptionPane.showMessageDialog(null, "Não existem sessões cadastradas!");
+            return;   
+        }
         // Mostra os filmes, as salas e os horarios:
         Sessao sessao = buscaSessao();
         if (InputParse.isNull(sessao)) {
@@ -82,37 +85,21 @@ public class VendaUI {
         if (InputParse.isNull(data)) {
             return;
         }
-        
-        if (!this.vendas.addVenda(new Ingresso(sessao, data))){
+
+        if (vendas.totalVendaPorSessaoData(sessao.getId(), data) == sessao.getSala().getCapacidade()) {
             JOptionPane.showMessageDialog(null, "Sessão Esgotada!");
+            return;
         }
-        //Mostra todos os pacientes existentes no repositório de pacientes. Notem que o PacienteUI tem uma função exclusiva para mostrar na tela.
-        /*
-         new PacienteUI(listaPacientes).mostrarPacientes();
-         String rg = Console.scanString("Escolha o RG do paciente: ");
-         Paciente paciente = listaPacientes.buscarPaciente(rg);
-
-         //Relaciona o prontuário:
-         String prontuario = Console.scanString("Escreva o prontuario: ");
-
-         //Instancia a consulta (com o horário atual e sem medicamentos)
-         Consulta consulta = new Consulta(paciente, prontuario);
-
-         //Chama o menu receituario para cadastrar os medicamentos na consulta.
-         new ReceituarioUI(consulta, listaMedicamentos).executar();
-
-         //Tarefa do aluno: caso permita o modo de edição, a finalização não deve ser efetuada nesse método
-         consulta.finalizar();
-
-         //Adiciona consulta no repositório
-         listaConsultas.addConsulta(consulta);
-         */
+        vendas.inserir(new Ingresso(sessao, data));
+        JOptionPane.showMessageDialog(null, "Venda Cadastrada!");
     }
 
     private Sessao buscaSessao() {
-        List<Sessoes> list = new SessaoUI(sessoes).getSessoesIds();
+        
+        // TODO Validar se existem sessoes
+        List<Sessao> list = new SessaoUI().getSessoesIds();
         String option = (String) JOptionPane.showInputDialog(null,
-                "Escolha uma sessao:\n" + new SessaoUI(sessoes).getSessoesTable(), "",
+                "Escolha uma sessao:\n" + new SessaoUI().getSessoesTable(), "",
                 JOptionPane.QUESTION_MESSAGE, null,
                 list.toArray(),
                 list.get(0));
@@ -120,7 +107,7 @@ public class VendaUI {
             JOptionPane.showMessageDialog(null, "Venda cancelada.");
             return null;
         }
-        return sessoes.getSessaoById(Integer.parseInt(option));
+        return sessoes.buscarPorId(Integer.parseInt(option));
     }
 
     private Date buscaDatas(Sessao sessao) {
@@ -134,12 +121,11 @@ public class VendaUI {
             JOptionPane.showMessageDialog(null, "Venda cancelada.");
             return null;
         }
-        Date data = null;
-        try {
-            data = DateUtil.stringToDate(option);
-        } catch (Exception e) {
-        };
-        return data;
+        Date data = new Date();
+        if (DateUtil.stringToDate(option, data)) {
+            return data;
+        }
+        return null;
     }
 
     private List<String> montaDatas(Sessao sessao) {
@@ -155,17 +141,17 @@ public class VendaUI {
         }
         return dates;
     }
-    
+
     private void listarVendas() {
-        if (vendas.hasIngresso()) {
+        if (!vendas.temVendas()) {
             JOptionPane.showMessageDialog(null, "Sem vendas cadastradas");
             return;
         }
         JOptionPane.showMessageDialog(null, getVendasTable());
     }
-    
+
     private void listarVendasPorDia() {
-        if (vendas.hasIngresso()) {
+        if (!vendas.temVendas()) {
             JOptionPane.showMessageDialog(null, "Sem vendas cadastradas");
             return;
         }
@@ -179,23 +165,24 @@ public class VendaUI {
             JOptionPane.showMessageDialog(null, "Consulta cancelada.");
             return;
         }
-        Date data = null;
-        try {
-            data = DateUtil.stringToDate(option);
-        } catch (Exception e) {
-        };
+        Date data = new Date();
+        if (!DateUtil.stringToDate(option, data)) {
+            JOptionPane.showMessageDialog(null, "Data inválida");
+            return;
+        }
+
         RowTable header = getHeader();
-        JOptionPane.showMessageDialog(null,new TableBuilder(getVendasPorDiaTable(data)).buildTable(header));
+        JOptionPane.showMessageDialog(null, new TableBuilder(getVendasPorDiaTable(data)).buildTable(header));
     }
-    
+
     private void listarVendasPorFilme() {
-        if (vendas.hasIngresso()) {
+        if (!vendas.temVendas()) {
             JOptionPane.showMessageDialog(null, "Sem vendas cadastradas");
             return;
         }
         List<String> filmes = getVendasPorFilme();
         String option = (String) JOptionPane.showInputDialog(null,
-                "Escolha um Filme:\n"+new FilmesUI(vendas.getFilmes()).getFilmesTable(),"",
+                "Escolha um Filme:\n" + new FilmesUI().getFilmesTable(), "",
                 JOptionPane.QUESTION_MESSAGE, null,
                 filmes.toArray(),
                 filmes.get(0));
@@ -205,59 +192,58 @@ public class VendaUI {
         }
         int codigo = Integer.parseInt(option);
         RowTable header = getHeader();
-        JOptionPane.showMessageDialog(null,new TableBuilder(getVendasPorFilmeTable(codigo)).buildTable(header));
+        JOptionPane.showMessageDialog(null, new TableBuilder(getVendasPorFilmeTable(codigo)).buildTable(header));
     }
-    
-    
+
     public List getVendasIds() {
         ArrayList<String> rows = new ArrayList<>();
-        for (SessaoDia sessaoDia : vendas.getIngressos()) {
+        for (Venda sessaoDia : vendas.listar()) {
             String row = Integer.toString(sessaoDia.hashCode());
             rows.add(row);
         }
         return rows;
     }
+
     public List getVendasPorDia() {
         ArrayList<String> rows = new ArrayList<>();
-        for (String date : vendas.getDatas()) {
+        for (String date : vendas.listarDias()) {
             String row = date;
             rows.add(row);
         }
         return rows;
     }
-    
+
     public List getVendasPorDiaTable(Date data) {
         ArrayList<RowTable> rows = new ArrayList<>();
-        for (SessaoDia sessaoDia : vendas.getIngressosPorDia(data)) {
+        for (Venda sessaoDia : vendas.buscarVendasPorDia(data)) {
             RowTable row = getRow(sessaoDia);
             rows.add(row);
         }
         return rows;
     }
-    
-     public List getVendasPorFilme() {
+
+    public List getVendasPorFilme() {
         ArrayList<String> rows = new ArrayList<>();
-        for (String date : vendas.getFilmesIds()) {
-            String row = date;
+        for (String id : new FilmesUI().getFilmesIds()) {
+            String row = id;
             rows.add(row);
         }
         return rows;
     }
-    
+
     public List getVendasPorFilmeTable(int codigo) {
         ArrayList<RowTable> rows = new ArrayList<>();
-        for (SessaoDia sessaoDia : vendas.getIngressosPorFilme(codigo)) {
+        for (Venda sessaoDia : vendas.buscarVendasPorFilme(codigo)) {
             RowTable row = getRow(sessaoDia);
             rows.add(row);
         }
         return rows;
     }
-    
 
     public String getVendasTable() {
         RowTable header = getHeader();
         ArrayList<RowTable> rows = new ArrayList<>();
-        for (SessaoDia sessaoDia : vendas.getIngressos()) {
+        for (Venda sessaoDia : vendas.listar()) {
             RowTable row = getRow(sessaoDia);
             rows.add(row);
         }
@@ -276,7 +262,7 @@ public class VendaUI {
         return header;
     }
 
-    private RowTable getRow(SessaoDia sessaoDia) {
+    private RowTable getRow(Venda sessaoDia) {
         RowTable row = new RowTable();
         row.append(new ColumnTable(sessaoDia.getSessao().getFilme().getNome()));
         row.append(new ColumnTable(Integer.toString(sessaoDia.getSessao().getSala().getNumero())));

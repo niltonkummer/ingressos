@@ -14,6 +14,7 @@ public class FilmesMenu {
     public static final int OP_CADASTRO = 1;
     public static final int OP_CONSULTA = 2;
     public static final int OP_LISTA = 3;
+    public static final int OP_DELETAR = 4;
     public static final int OP_SAIR = 0;
 
     public static final String MSG_FILME_CADASTRADO = "Este filme já esta cadastrado";
@@ -26,9 +27,10 @@ public class FilmesMenu {
     public static final String LBL_FAIXA_ETARIA = "Faixa etária";
 
     public static String getOptions() {
-        return "Cadastro de Filmes: 1\n"
+        return "Cadastro de Filme: 1\n"
                 + "Consulta de Filmes: 2\n"
                 + "Lista de Filmes: 3\n"
+                + "Deletar Filme: 4\n"
                 + "Sair: 0\n";
     }
 }

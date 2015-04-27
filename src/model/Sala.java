@@ -18,7 +18,11 @@ public class Sala {
         this.numero = numero;
         this.capacidade = capacidade;
     }
-
+    
+    public Sala(int capacidade) {
+        this.capacidade = capacidade;
+    }
+    
     /**
      * @return the numero
      */
@@ -31,5 +35,12 @@ public class Sala {
      */
     public int getCapacidade() {
         return capacidade;
+    }
+
+    /**
+     * @param numero the numero to set
+     */
+    public void setNumero(int numero) {
+        this.numero = numero;
     }
 }

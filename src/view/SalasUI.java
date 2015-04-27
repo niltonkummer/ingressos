@@ -1,18 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
+import dao.SalaDaoMysql;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.Sala;
-import repository.Salas;
+import utils.InputParse;
 import utils.table.ColumnTable;
 import utils.table.RowTable;
 import utils.table.TableBuilder;
+import view.menu.GlobalMenu;
 import view.menu.SalasMenu;
 
 /**
@@ -20,19 +17,20 @@ import view.menu.SalasMenu;
  * @author niltonkummer
  */
 public class SalasUI {
-    private Salas salas;
 
-    public SalasUI(Salas salas) {
-        this.salas = salas;
+    private SalaDaoMysql salas;
+
+    public SalasUI() {
+        salas = new SalaDaoMysql();
     }
-    
+
     public void run() {
         int opcao = 0;
         do {
             try {
                 opcao = Integer.parseInt(JOptionPane.showInputDialog(SalasMenu.getOptions()));
             } catch (Exception e) {
-                opcao = SalasMenu.OP_SAIR;
+                opcao = -1;
             };
 
             switch (opcao) {
@@ -43,6 +41,10 @@ public class SalasUI {
                 case SalasMenu.OP_LISTA:
                     // Listar filmes
                     listarSalas();
+                    break;
+                    case SalasMenu.OP_DELETAR:
+                    // Listar filmes
+                    deletarSala();
                     break;
                 case SalasMenu.OP_SAIR:
                     System.out.println("Volta para o menu principal");
@@ -55,16 +57,23 @@ public class SalasUI {
     }
 
     private void cadastraSala() {
-        String[] camposLabel = new String[]{SalasMenu.LBL_NUMERO, SalasMenu.LBL_CAPACIDADE};
+        String[] camposLabel = new String[]{SalasMenu.LBL_CAPACIDADE};
         ArrayList<String> camposValue = new ArrayList<String>();
         for (String item : camposLabel) {
+            String label = item + ":";
             String option = JOptionPane.showInputDialog(item + ":");
-            if (item.equals(camposLabel[0])) {
-                int codigo = Integer.parseInt(option);
-                if (salas.hasSala(codigo)) {
-                    JOptionPane.showMessageDialog(null, SalasMenu.MSG_SALA_EXISTE);
-                    return;
-                }
+            if (item.equals(SalasMenu.LBL_NUMERO) || item.equals(SalasMenu.LBL_CAPACIDADE)) {
+                boolean valid = false;
+                do {
+                    if (InputParse.isNull(option)) {
+                        return;
+                    }
+                    valid = InputParse.validateInt(option);
+                    if (!valid) {
+                        JOptionPane.showMessageDialog(null, GlobalMenu.MSG_VALOR_INVALIDO + " " + item);
+                        option = JOptionPane.showInputDialog(label);
+                    }
+                } while (!valid);
             }
             if (option == null) {
                 JOptionPane.showMessageDialog(null, SalasMenu.MSG_SALA_CANCELADA);
@@ -72,33 +81,54 @@ public class SalasUI {
             }
             camposValue.add(option);
         }
-        salas.addSala(new Sala(Integer.parseInt(camposValue.get(0)), Integer.parseInt(camposValue.get(1))));
+        salas.inserir(new Sala(Integer.parseInt(camposValue.get(0))));
         JOptionPane.showMessageDialog(null, SalasMenu.MSG_SALA_CADASTRADA);
     }
 
-
     private void listarSalas() {
-        if (salas.isEmpty()){
+        if (salas.listar().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem salas cadastradas.");
             return;
         }
         JOptionPane.showMessageDialog(null, getSalasTable());
     }
     
-    public List getSalasIds() {
+    private void deletarSala() {
+    List<Sala> lista = salas.listar();
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Não existem salas cadastradas");
+            return;
+        }
+        List<String> list = getSalasIds();
+        String option = (String) JOptionPane.showInputDialog(null,
+                "Escolha uma sala para deletar:\n" + new SalasUI().getSalasTable(), "",
+                JOptionPane.QUESTION_MESSAGE, null,
+                list.toArray(),
+                list.get(0));
+        if (InputParse.isNull(option)) {
+            JOptionPane.showMessageDialog(null, "Deleção de sala interrompida.");
+            return;
+        }
         
+        if (salas.deletar(salas.buscarPorId(Integer.parseInt(option)))) {
+            JOptionPane.showMessageDialog(null, "Sala removida.");
+        }
+    }
+
+    public List getSalasIds() {
+
         ArrayList<String> rows = new ArrayList<>();
-        for (Sala sala : salas.getListaSalas()) {
+        for (Sala sala : salas.listar()) {
             String row = Integer.toString(sala.getNumero());
             rows.add(row);
         }
         return rows;
     }
-    
+
     public String getSalasTable() {
         RowTable header = getHeader();
         ArrayList<RowTable> rows = new ArrayList<>();
-        for (Sala sala : salas.getListaSalas()) {
+        for (Sala sala : salas.listar()) {
             RowTable row = getRow(sala);
             rows.add(row);
         }

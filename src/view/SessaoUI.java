@@ -5,6 +5,9 @@
  */
 package view;
 
+import dao.FilmeDaoMysql;
+import dao.SalaDaoMysql;
+import dao.SessaoDaoMysql;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
@@ -12,9 +15,6 @@ import javax.swing.JOptionPane;
 import model.Sala;
 import model.Sessao;
 import model.Filme;
-import repository.Sessoes;
-import repository.Salas;
-import repository.Filmes;
 import utils.table.ColumnTable;
 import utils.table.RowTable;
 import utils.table.TableBuilder;
@@ -29,56 +29,16 @@ import view.menu.SessoesMenu;
  */
 public class SessaoUI {
 
-    private Sessoes sessoes;
-    private Salas salas;
-    private Filmes filmes;
+    private SessaoDaoMysql sessoes;
+    private SalaDaoMysql salas;
+    private FilmeDaoMysql filmes;
 
-    public SessaoUI(Sessoes sessoes, Salas salas, Filmes filmes) {
-        this.sessoes = sessoes;
-        this.salas = salas;
-        this.filmes = filmes;
+    public SessaoUI() {
+        this.sessoes = new SessaoDaoMysql();
+        this.salas = new SalaDaoMysql();
+        this.filmes = new FilmeDaoMysql();
     }
-    
-    public void createSessao() {
-        Date hour = null; 
-        try{hour = DateUtil.stringToHour("10:10");}catch(Exception e ){};
-        Date date = null; 
-        try{date = DateUtil.stringToDate("31/04/2015");}catch(Exception e ){};
-        this.sessoes.addSessao(
-                new Sessao(salas.getSalaById(1), 
-                filmes.getFilmeById(100), 
-                hour,
-                date));
-        
-        try{hour = DateUtil.stringToHour("14:10");}catch(Exception e ){};
-        try{date = DateUtil.stringToDate("31/04/2015");}catch(Exception e ){};
-        this.sessoes.addSessao(
-                new Sessao(salas.getSalaById(1), 
-                filmes.getFilmeById(200), 
-                hour,
-                date));
-        
-        try{hour = DateUtil.stringToHour("13:10");}catch(Exception e ){};
-        try{date = DateUtil.stringToDate("31/04/2015");}catch(Exception e ){};
-        this.sessoes.addSessao(
-                new Sessao(salas.getSalaById(2), 
-                filmes.getFilmeById(100), 
-                hour,
-                date));
-        
-        try{hour = DateUtil.stringToHour("15:10");}catch(Exception e ){};
-        try{date = DateUtil.stringToDate("31/04/2015");}catch(Exception e ){};
-        this.sessoes.addSessao(
-                new Sessao(salas.getSalaById(3), 
-                filmes.getFilmeById(300), 
-                hour,
-                date));
-        
-    }
-
-    public SessaoUI(Sessoes sessoes) {
-        this.sessoes = sessoes;
-    }
+   
 
     public void run() {
         int opcao = 0;
@@ -137,7 +97,7 @@ public class SessaoUI {
                 return;
             }
 
-            isOcupado = sessoes.isOcupado(sala.getNumero(), data, filme.getDuracaoInMiliseconds());
+            isOcupado = isOcupado(sala.getNumero(), data, filme.getDuracaoInMiliseconds());
             if (isOcupado) {
                 JOptionPane.showMessageDialog(null, "Sessão invade horário de outra! Cadastre novamente.");
             }
@@ -150,17 +110,17 @@ public class SessaoUI {
         }
 
         Sessao sessao = new Sessao(sala, filme, data, dataExp);
-        sessoes.addSessao(sessao);
+        sessoes.inserir(sessao);
         JOptionPane.showMessageDialog(null, "Sessão cadastrada!");
     }
 
     private boolean mainValidate() {
-        if (salas.getListaSalas().isEmpty()) {
+        if (salas.listar().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem salas disponíveis");
             return false;
         }
 
-        if (filmes.getListaFilmes().isEmpty()) {
+        if (filmes.listar().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem filmes disponíveis");
             return false;
         }
@@ -170,9 +130,9 @@ public class SessaoUI {
 
     private Sala buscaSala() {
         Sala sala = null;
-        List<Sala> list = new SalasUI(salas).getSalasIds();
+        List<Sala> list = new SalasUI().getSalasIds();
         String option = (String) JOptionPane.showInputDialog(null,
-                "Escolha uma sala:\n" + new SalasUI(salas).getSalasTable(), "",
+                "Escolha uma sala:\n" + new SalasUI().getSalasTable(), "",
                 JOptionPane.QUESTION_MESSAGE, null,
                 list.toArray(),
                 list.get(0));
@@ -180,13 +140,13 @@ public class SessaoUI {
             JOptionPane.showMessageDialog(null, "Cadastro de sessão cancelado.");
             return null;
         }
-        return salas.getSalaById(Integer.parseInt(option));
+        return salas.buscarPorId(Integer.parseInt(option));
     }
 
     private Filme buscaFilme() {
-        List<Filme> list = new FilmesUI(filmes).getFilmesIds();
+        List<String> list = new FilmesUI().getFilmesIds();
         String option = (String) JOptionPane.showInputDialog(null,
-                "Escolha um filme:\n" + new FilmesUI(filmes).getFilmesTable(), "",
+                "Escolha um filme:\n" + new FilmesUI().getFilmesTable(), "",
                 JOptionPane.QUESTION_MESSAGE, null,
                 list.toArray(),
                 list.get(0));
@@ -194,7 +154,7 @@ public class SessaoUI {
             JOptionPane.showMessageDialog(null, "Busca por filme interrompida.");
             return null;
         }
-        return filmes.getFilmeById(Integer.parseInt(option));
+        return filmes.buscarPorId(Integer.parseInt(option));
     }
 
     private Date getHorario() {
@@ -205,10 +165,11 @@ public class SessaoUI {
             if (InputParse.isNull(option)) {
                 return null;
             }
-            try {
-                dt = DateUtil.stringToHour(option);
-            } catch (Exception e) {
+            dt = new Date();
+            if (!DateUtil.stringToHour(option,dt)){
                 JOptionPane.showMessageDialog(null, "Horário inválido");
+                dt = null;
+                continue;
             }
         }
         return dt;
@@ -218,14 +179,15 @@ public class SessaoUI {
         String option = null;
         Date dt = null;
         while (InputParse.isNull(dt)) {
-            option = JOptionPane.showInputDialog("Expira: DD/MM/AAAA");
+            option = JOptionPane.showInputDialog("Expira em: DD/MM/AAAA");
             if (InputParse.isNull(option)) {
                 return null;
             }
-            try {
-                dt = DateUtil.stringToDate(option);
-            } catch (Exception e) {
+            dt = new Date();
+            if (!DateUtil.stringToDate(option, dt)) {
                 JOptionPane.showMessageDialog(null, "Data inválida");
+                dt = null;
+                continue;
             }
             if (dt.before(new Date())) {
                 JOptionPane.showMessageDialog(null, "Data menor que o dia atual");
@@ -236,17 +198,41 @@ public class SessaoUI {
     }
 
     private void listarSessoes() {
-        if (sessoes.getListaSessoes().isEmpty()) {
+        if (sessoes.listar().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Sem sessões cadastradas");
             return;
         }
         JOptionPane.showMessageDialog(null, getSessoesTable());
     }
 
+    public boolean isOcupado(int numero, Date horario, long duracao) {
+        for (Sessao sessao : sessoes.listar()) {
+            // Se sala e horario são iguais
+            if (sessao.getSala().getNumero() == numero
+                    && intervalTime(sessao.getFilme().getDuracaoInMiliseconds(), duracao, sessao.getHorario(),
+                            horario)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean intervalTime(long duration1, long duration2, Date h1, Date h2) {
+        long a = h1.getTime();
+        long b = h1.getTime() + duration1;
+        long c = h2.getTime();
+        long d = h2.getTime() + duration2;
+
+        return (c >= a && c <= b)
+                || (d >= a && d <= b)
+                || (a >= c && a <= d)
+                || (b >= c && b <= d);
+    }
+    
     public List getSessoesIds() {
         ArrayList<String> rows = new ArrayList<>();
-        for (Sessao sessao : sessoes.getListaSessoes()) {
-            String row = Integer.toString(sessao.getCodigo());
+        for (Sessao sessao : sessoes.listar()) {
+            String row = Integer.toString(sessao.getId());
             rows.add(row);
         }
         return rows;
@@ -255,7 +241,7 @@ public class SessaoUI {
     public String getSessoesTable() {
         RowTable header = getHeader();
         ArrayList<RowTable> rows = new ArrayList<>();
-        for (Sessao sessao : sessoes.getListaSessoes()) {
+        for (Sessao sessao : sessoes.listar()) {
             RowTable row = getRow(sessao);
             rows.add(row);
         }

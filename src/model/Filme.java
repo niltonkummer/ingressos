@@ -23,7 +23,6 @@ public class Filme {
     }
 
     public Filme(String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
-        this.id = id;// generateCodigo();
         this.nome = nome;
         this.genero = genero;
         this.sinopse = sinopse;
