@@ -44,6 +44,10 @@ public class FilmesUI {
                     // FILMES
                     cadastrarFilme();
                     break;
+                case FilmesMenu.OP_ATUALIZAR:
+                    // FILMES
+                    atualizarFilme();
+                    break;
                 case FilmesMenu.OP_CONSULTA:
                     String query = JOptionPane.showInputDialog("Faça uma busca:");
                     consultarFilmes(query);
@@ -105,6 +109,65 @@ public class FilmesUI {
                 camposValue.get(1), camposValue.get(2), Integer.parseInt(camposValue.get(3)),
                 Integer.parseInt(camposValue.get(4))));
         JOptionPane.showMessageDialog(null, "Filme cadastrado!");
+    }
+    
+    private void atualizarFilme() {
+        List<Filme> lista = filmes.listar();
+        if (lista.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Não existem filmes cadastrados");
+            return;
+        }
+        List<String> list = getFilmesIds();
+        String option = (String) JOptionPane.showInputDialog(null,
+                "Escolha um filme para atulizar:\n" + new FilmesUI().getFilmesTable(), "",
+                JOptionPane.QUESTION_MESSAGE, null,
+                list.toArray(),
+                list.get(0));
+        if (InputParse.isNull(option)) {
+            JOptionPane.showMessageDialog(null, "Atulização de filme interrompida.");
+            return;
+        }
+        Filme filme = filmes.buscarPorId(Integer.parseInt(option));
+        
+        String[] camposLabel = new String[]{
+            FilmesMenu.LBL_NOME,
+            FilmesMenu.LBL_GENERO,
+            FilmesMenu.LBL_SINOPSE,
+            FilmesMenu.LBL_FAIXA_ETARIA};
+        ArrayList<String> camposValue = new ArrayList<String>();
+        for (String item : camposLabel) {
+            String label = item + ":";
+            option = JOptionPane.showInputDialog(label);
+            if (item.equals(FilmesMenu.LBL_FAIXA_ETARIA)) {
+                boolean valid = false;
+                do {
+                    if (InputParse.isNull(option)) {
+                        return;
+                    }
+                    valid = InputParse.validateInt(option);
+                    if (!valid) {
+                        JOptionPane.showMessageDialog(null, GlobalMenu.MSG_VALOR_INVALIDO + " " + item);
+                        option = JOptionPane.showInputDialog(label);
+                    }
+                } while (!valid);
+
+            }
+            if (InputParse.isNull(option)) {
+                JOptionPane.showMessageDialog(null, "Cadastro de filme cancelado");
+                return;
+            }
+            camposValue.add(option);
+        }
+        
+        filme.setNome(camposValue.get(0));
+        filme.setGenero(camposValue.get(1));
+        filme.setSinopse(camposValue.get(2));
+        filme.setFaixaEtaria(Integer.parseInt(camposValue.get(3)));
+        
+        if (!filmes.atualizar(filme)) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao atulizar o filme");
+        }
+        JOptionPane.showMessageDialog(null, "Filme atualizado!");
     }
     
     private void deletarFilme() {

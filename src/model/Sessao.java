@@ -75,4 +75,32 @@ public class Sessao {
     public void setId(int id) {
         this.id = id;
     }
+
+    /**
+     * @param sala the sala to set
+     */
+    public void setSala(Sala sala) {
+        this.sala = sala;
+    }
+
+    /**
+     * @param filme the filme to set
+     */
+    public void setFilme(Filme filme) {
+        this.filme = filme;
+    }
+
+    /**
+     * @param horario the horario to set
+     */
+    public void setHorario(Date horario) {
+        this.horario = horario;
+    }
+
+    /**
+     * @param expiracao the expiracao to set
+     */
+    public void setExpiracao(Date expiracao) {
+        this.expiracao = expiracao;
+    }
 }

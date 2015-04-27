@@ -15,6 +15,7 @@ public class FilmesMenu {
     public static final int OP_CONSULTA = 2;
     public static final int OP_LISTA = 3;
     public static final int OP_DELETAR = 4;
+    public static final int OP_ATUALIZAR = 5;
     public static final int OP_SAIR = 0;
 
     public static final String MSG_FILME_CADASTRADO = "Este filme já esta cadastrado";
@@ -31,6 +32,7 @@ public class FilmesMenu {
                 + "Consulta de Filmes: 2\n"
                 + "Lista de Filmes: 3\n"
                 + "Deletar Filme: 4\n"
+                + "Atualizar Filme: 5\n"
                 + "Sair: 0\n";
     }
 }

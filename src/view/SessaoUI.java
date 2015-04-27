@@ -38,7 +38,6 @@ public class SessaoUI {
         this.salas = new SalaDaoMysql();
         this.filmes = new FilmeDaoMysql();
     }
-   
 
     public void run() {
         int opcao = 0;
@@ -58,11 +57,10 @@ public class SessaoUI {
                     // Listar sessoes
                     listarSessoes();
                     break;
-                //case SessoesMenu.OP_LISTA_POR_SALA:
-                // Listar sessoes
-                //listarSessoes();
-                // break;
-
+                case SessoesMenu.OP_ATUALIZAR:
+                    // FILMES
+                    atualizarSessao();
+                    break;
                 case SessoesMenu.OP_SAIR:
                     System.out.println("Volta para o menu principal");
                     break;
@@ -114,6 +112,61 @@ public class SessaoUI {
         JOptionPane.showMessageDialog(null, "Sessão cadastrada!");
     }
 
+    private void atualizarSessao() {
+        // TODO Validar se existem sessoes
+        List<Sessao> list = getSessoesIds();
+        String option = (String) JOptionPane.showInputDialog(null,
+                "Escolha uma sessao:\n" + new SessaoUI().getSessoesTable(), "",
+                JOptionPane.QUESTION_MESSAGE, null,
+                list.toArray(),
+                list.get(0));
+        if (InputParse.isNull(option)) {
+            JOptionPane.showMessageDialog(null, "Atualização cancelada.");
+            return;
+        }
+        Sessao sessao = sessoes.buscarPorId(Integer.parseInt(option));
+    
+         // Mostra as salas do cinema
+        Sala sala = buscaSala();
+        if (InputParse.isNull(sala)) {
+            return;
+        }
+        // Codigo do filme
+        Filme filme = buscaFilme();
+        if (InputParse.isNull(filme)) {
+            return;
+        }
+        boolean isOcupado = false;
+        // Horario
+        Date data = null;
+        do {
+            data = getHorario();
+            if (InputParse.isNull(data)) {
+                return;
+            }
+
+            isOcupado = isOcupado(sala.getNumero(), data, filme.getDuracaoInMiliseconds());
+            if (isOcupado) {
+                JOptionPane.showMessageDialog(null, "Sessão invade horário de outra! Cadastre novamente.");
+            }
+        } while (isOcupado);
+
+        // Data de expiração
+        Date dataExp = getData();
+        if (InputParse.isNull(dataExp)) {
+            return;
+        }
+        sessao.setFilme(filme);
+        sessao.setSala(sala);
+        sessao.setHorario(data);
+        sessao.setExpiracao(dataExp);
+        if (!sessoes.atualizar(sessao)) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao salvar a sessão!");
+        }
+        JOptionPane.showMessageDialog(null, "Sessão cadastrada!");
+        
+    }
+    
     private boolean mainValidate() {
         if (salas.listar().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem salas disponíveis");
@@ -166,7 +219,7 @@ public class SessaoUI {
                 return null;
             }
             dt = new Date();
-            if (!DateUtil.stringToHour(option,dt)){
+            if (!DateUtil.stringToHour(option, dt)) {
                 JOptionPane.showMessageDialog(null, "Horário inválido");
                 dt = null;
                 continue;
@@ -228,7 +281,7 @@ public class SessaoUI {
                 || (a >= c && a <= d)
                 || (b >= c && b <= d);
     }
-    
+
     public List getSessoesIds() {
         ArrayList<String> rows = new ArrayList<>();
         for (Sessao sessao : sessoes.listar()) {

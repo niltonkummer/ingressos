@@ -83,5 +83,33 @@ public class Filme {
         return faixaEtaria;
     }
 
+    /**
+     * @param nome the nome to set
+     */
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    /**
+     * @param genero the genero to set
+     */
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    /**
+     * @param sinopse the sinopse to set
+     */
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
+    }
+
+    /**
+     * @param faixaEtaria the faixaEtaria to set
+     */
+    public void setFaixaEtaria(int faixaEtaria) {
+        this.faixaEtaria = faixaEtaria;
+    }
+
     
 }

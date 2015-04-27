@@ -64,21 +64,25 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
     }
 
     @Override
-    public void atualizar(Filme filme) {
+    public boolean atualizar(Filme filme) {
         try {
             String sql = "UPDATE " + tabela + " SET nome=?, genero=?, sinopse=?, "
-                    + " duracao=?, faixa_etaria=? WHERE " + idtabela + "=?";
+                    + " faixa_etaria=? WHERE " + idtabela + "=?";
             conectar(sql);
-            setAllFields(comando, filme);
+            comando.setString(1, filme.getNome());
+            comando.setString(2, filme.getGenero());
+            comando.setString(3, filme.getSinopse());
+            comando.setInt(4, filme.getFaixaEtaria());
             comando.setInt(5, filme.getId());
             comando.executeUpdate();
             fecharConexao();
-
+            return true;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     @Override
@@ -91,7 +95,6 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 filme = buildObject(resultado);
-
             }
             fecharConexao();
 

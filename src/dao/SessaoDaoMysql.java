@@ -17,7 +17,7 @@ import model.Sessao;
  */
 public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
 
-    
+    private static final String idtabela = "idsessao";
     private static final String tabela = "sessao";
 
     @Override
@@ -61,21 +61,22 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
     }
 
     @Override
-    public void atualizar(Sessao sessao) {
+    public boolean atualizar(Sessao sessao) {
         try {
-            String sql = "UPDATE " + tabela + " SET nome=?, genero=?, sinopse=?, "
-                    + "faixa_etaria=?, duracao=? WHERE id=?";
+            String sql = "UPDATE " + tabela + " SET idsala=?, idfilme=?, horario=?, "
+                    + "expiracao=? WHERE "+idtabela+"=?";
             conectar(sql);
             setAllFields(comando, sessao);
             comando.setInt(5, sessao.getId());
             comando.executeUpdate();
             fecharConexao();
-
+            return true;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     @Override
