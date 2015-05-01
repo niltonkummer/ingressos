@@ -14,6 +14,12 @@ import java.util.Date;
  * @author niltonkummer
  */
 public class DateUtil {
+    /**
+     * 
+     * @param hour
+     * @param retorno
+     * @return se a data foi formatada para o objeto passado como referência
+     */
     public static boolean stringToHour(String hour, Date retorno){
        if(hour == null){
 			return false;
@@ -21,24 +27,41 @@ public class DateUtil {
         
         return(isValidDate(hour,"HH:mm", retorno));
     }
-    
+    /**
+     * 
+     * @param format
+     * @param data
+     * @return formata uma data texto para um objeto Date
+     */
     public static String dateToString(String format, Date data){
         return(new SimpleDateFormat(format).format(data));
     }
     
+    /**
+     * 
+     * @param data
+     * @param retorno
+     * @return se o texto é uma data válida configura a referência
+     */
     public static boolean stringToDate(String data, Date retorno) 
     {
-        if(data == null){
-			return false;
-		}
-        
         return(isValidDate(data,"dd/MM/yyyy", retorno));
     }
     
-    private static boolean isValidDate(String dateParam, String dateFormat, Date date){
+    /**
+     * 
+     * @param dateParam
+     * @param dateFormat
+     * @param date
+     * @return 
+     */
+    public static boolean isValidDate(String dateParam, String dateFormat, Date date){
         SimpleDateFormat simpDateFormat = new SimpleDateFormat(dateFormat);
 		simpDateFormat.setLenient(false);
- 
+        if(dateParam == null){
+			return false;
+		}
+        
 		try {
  
 			date.setTime(simpDateFormat.parse(dateParam).getTime());

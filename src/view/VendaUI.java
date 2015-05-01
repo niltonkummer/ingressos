@@ -22,7 +22,7 @@ import utils.table.TableBuilder;
 import view.menu.VendasMenu;
 
 /**
- *
+ * Contém as informações para o controle de total de lugares disponíves 
  * @author niltonkummer
  */
 public class VendaUI {

@@ -24,6 +24,9 @@ public class SalasUI {
         salas = new SalaDaoMysql();
     }
 
+    /**
+     * Inicia a funcionalidade de menu
+     */
     public void run() {
         int opcao = 0;
         do {
@@ -42,7 +45,7 @@ public class SalasUI {
                     // Listar filmes
                     listarSalas();
                     break;
-                    case SalasMenu.OP_DELETAR:
+                case SalasMenu.OP_DELETAR:
                     // Listar filmes
                     deletarSala();
                     break;
@@ -56,6 +59,9 @@ public class SalasUI {
         } while (opcao != SalasMenu.OP_SAIR);
     }
 
+    /**
+     * Cadastro de objetos Sala
+     */
     private void cadastraSala() {
         String[] camposLabel = new String[]{SalasMenu.LBL_CAPACIDADE};
         ArrayList<String> camposValue = new ArrayList<String>();
@@ -92,9 +98,12 @@ public class SalasUI {
         }
         JOptionPane.showMessageDialog(null, getSalasTable());
     }
-    
+
+    /**
+     * Exclusão de objetos Sala
+     */
     private void deletarSala() {
-    List<Sala> lista = salas.listar();
+        List<Sala> lista = salas.listar();
         if (lista.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Não existem salas cadastradas");
             return;
@@ -109,12 +118,15 @@ public class SalasUI {
             JOptionPane.showMessageDialog(null, "Deleção de sala interrompida.");
             return;
         }
-        
+
         if (salas.deletar(salas.buscarPorId(Integer.parseInt(option)))) {
             JOptionPane.showMessageDialog(null, "Sala removida.");
         }
     }
 
+    /**
+     * Busca de objetos Sala por id
+     */
     public List getSalasIds() {
 
         ArrayList<String> rows = new ArrayList<>();

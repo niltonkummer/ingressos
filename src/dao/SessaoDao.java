@@ -6,6 +6,7 @@ import model.Sessao;
 /**
  *
  * @author niltonkummer
+ * Interface Dao para Sessão
  */
 public interface SessaoDao {
     public void inserir(Sessao sessao);

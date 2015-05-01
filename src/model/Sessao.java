@@ -19,13 +19,27 @@ public class Sessao {
     private Date horario;
     private Date expiracao;
 
+    /**
+     * Instancia um novo objeto Sessao sem o id
+     * @param sala
+     * @param filme
+     * @param horario
+     * @param expira 
+     */
     public Sessao(Sala sala, Filme filme, Date horario, Date expira) {
         this.sala = sala;
         this.filme = filme;
         this.horario = horario;
         this.expiracao = expira;
     }
-    
+    /**
+     * Instancia um novo objeto Filme com o id
+     * @param id
+     * @param sala
+     * @param filme
+     * @param horario
+     * @param expira 
+     */
     public Sessao(int id,Sala sala, Filme filme, Date horario, Date expira) {
         this.id = id;
         this.sala = sala;

@@ -8,7 +8,7 @@ package utils;
 import java.util.Scanner;
 
 /**
- *
+ * Valida as entradas do JOptionPane de acordo com os tipos
  * @author niltonkummer
  */
 public class InputParse {

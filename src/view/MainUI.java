@@ -6,15 +6,16 @@ import view.menu.MainMenu;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Menu principal da aplicação
  * @author niltonkummer
  */
 public class MainUI {
 
-    public MainUI() {
-        //JOptionPane.showConfirmDialog(null, "teste");
-    }
+    public MainUI() {}
 
+    /**
+     * Inicia a funcionalidade de menu
+     */
     public void run() {
         int opcao = 0;
         do {

@@ -13,6 +13,7 @@ import model.Ingresso;
 /**
  *
  * @author niltonkummer
+ * Interface Dao Venda
  */
 public interface VendaDao {
     public void inserir(Ingresso ingresso);

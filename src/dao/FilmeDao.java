@@ -6,6 +6,7 @@ import model.Filme;
 /**
  *
  * @author niltonkummer
+ * Interface do model Filme
  */
 public interface FilmeDao {
     public void inserir(Filme filme);

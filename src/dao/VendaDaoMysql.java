@@ -1,5 +1,6 @@
 package dao;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,13 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Venda;
 import model.Ingresso;
 import utils.DateUtil;
 
 /**
  *
- * @author niltonkummer
+ * @author niltonkummer Implementação do Dao Venda para Mysql
  */
 public class VendaDaoMysql extends DefaultDao implements VendaDao {
 
@@ -34,6 +36,8 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             comando.executeUpdate();
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -50,6 +54,8 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             comando.executeUpdate();
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -63,19 +69,21 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
         try {
             String sql = "SELECT * FROM " + tabela + " WHERE " + idtabela + "=? AND data=?";
             conectar(sql);
-            
+
             comando.setInt(1, id);
             comando.setDate(2, new java.sql.Date(data.getTime()));
             System.out.println(sql);
-            
+
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
-                
+
                 venda = buildObject(resultado);
-                System.out.println("Item: "+venda);
+                System.out.println("Item: " + venda);
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -83,9 +91,9 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
         }
         return venda;
     }
-    
+
     @Override
-    public boolean temVendas(){
+    public boolean temVendas() {
         try {
             String sql = "SELECT count(*) as total FROM " + tabela;
             conectar(sql);
@@ -93,22 +101,24 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             ResultSet resultado = comando.executeQuery();
             if (resultado.next()) {
                 int total = resultado.getInt("total");
-                return (total > 0); 
+                return (total > 0);
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
-        
+
     }
-    
+
     @Override
-    public int totalVendaPorSessaoData(int id, Date data){
-         int total = 0;
+    public int totalVendaPorSessaoData(int id, Date data) {
+        int total = 0;
         try {
             String sql = "SELECT count(*) as total FROM " + tabela + " WHERE " + idtabela + "=? AND data=?";
             conectar(sql);
@@ -120,13 +130,15 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return total;
-        
+
     }
 
     @Override
@@ -142,6 +154,8 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -149,7 +163,7 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
         }
         return listaVendas;
     }
-    
+
     @Override
     public List<String> listarDias() {
         List<String> listaDias = new ArrayList<String>();
@@ -158,11 +172,13 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             conectar(sql);
             ResultSet resultado = comando.executeQuery();
             while (resultado.next()) {
-                String dataStr = DateUtil.dateToString("dd/MM/yyyy",resultado.getDate("data"));
+                String dataStr = DateUtil.dateToString("dd/MM/yyyy", resultado.getDate("data"));
                 listaDias.add(dataStr);
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -171,7 +187,7 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
         return listaDias;
     }
 
-    public List<Venda> buscarVendasPorDia(Date data){
+    public List<Venda> buscarVendasPorDia(Date data) {
         List<Venda> listaVendas = new ArrayList<Venda>();
         try {
             String sql = "SELECT idsessao, data, count(*) as total FROM venda WHERE data=? GROUP BY data";
@@ -184,16 +200,18 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaVendas;
-        
+
     }
-    
-    public List<Venda> buscarVendasPorFilme(int id){
+
+    public List<Venda> buscarVendasPorFilme(int id) {
         List<Venda> listaVendas = new ArrayList<Venda>();
         try {
             String sql = "SELECT f.nome, s.idsessao, v.data,count(*) as total FROM venda v "
@@ -209,15 +227,17 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaVendas;
-        
+
     }
-    
+
     private void setAllFields(PreparedStatement comando, Ingresso ingresso) throws SQLException {
         comando.setInt(1, ingresso.getSessao().getId());
         comando.setDate(2, new java.sql.Date(ingresso.getData().getTime()));
@@ -230,7 +250,5 @@ public class VendaDaoMysql extends DefaultDao implements VendaDao {
                 resultado.getInt("total")
         );
     }
-
-   
 
 }

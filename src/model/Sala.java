@@ -14,11 +14,20 @@ public class Sala {
     private int numero;
     private int capacidade;
 
+    /**
+     * Instancia um novo objeto Sala com o id
+     * @param numero
+     * @param capacidade 
+     */
     public Sala(int numero, int capacidade) {
         this.numero = numero;
         this.capacidade = capacidade;
     }
     
+    /**
+     * Instancia um novo objeto Filme sem o id
+     * @param capacidade 
+     */
     public Sala(int capacidade) {
         this.capacidade = capacidade;
     }

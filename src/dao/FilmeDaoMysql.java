@@ -1,5 +1,6 @@
 package dao;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import model.Filme;
 
 /**
  *
- * @author niltonkummer
+ * @author niltonkummer Implementação do Dao Filme para Mysql
  */
 public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
 
@@ -39,6 +40,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (SQLException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -53,6 +56,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             comando.executeUpdate();
             fecharConexao();
             return true;
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (MySQLIntegrityConstraintViolationException e) {
             JOptionPane.showMessageDialog(null, "Filme não pode ser removido pois já existe sessão vinculada");
         } catch (ClassNotFoundException ex) {
@@ -77,6 +82,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             comando.executeUpdate();
             fecharConexao();
             return true;
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -98,6 +105,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -120,6 +129,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -141,6 +152,8 @@ public class FilmeDaoMysql extends DefaultDao implements FilmeDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FilmeDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {

@@ -12,7 +12,15 @@ public class Filme {
     private String sinopse;
     private int faixaEtaria;
     private long duracao;
-
+    /**
+     * Instancia um novo objeto Filme com o id
+     * @param id
+     * @param nome
+     * @param genero
+     * @param sinopse
+     * @param duracao
+     * @param faixaEtaria 
+     */
     public Filme(int id, String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
         this.id = id;// generateCodigo();
         this.nome = nome;
@@ -22,6 +30,14 @@ public class Filme {
         this.faixaEtaria = faixaEtaria;
     }
 
+    /**
+     * Instancia um novo objeto Filme sem o id
+     * @param nome
+     * @param genero
+     * @param sinopse
+     * @param duracao
+     * @param faixaEtaria 
+     */
     public Filme(String nome, String genero, String sinopse, int duracao, int faixaEtaria) {
         this.nome = nome;
         this.genero = genero;

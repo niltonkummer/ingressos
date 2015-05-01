@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import dao.FilmeDaoMysql;
@@ -28,7 +23,9 @@ public class FilmesUI {
     public FilmesUI() {
        filmes = new FilmeDaoMysql();
     }
-
+    /**
+     * Menu inicial de FilmesUI
+     */
     public void run() {
         int opcao = 0;
         do {
@@ -71,7 +68,9 @@ public class FilmesUI {
             }
         } while (opcao != MainMenu.OP_SAIR);
     }
-
+    /**
+     * Cadastro de objetos Filme
+     */
     private void cadastrarFilme() {
         
         String[] camposLabel = new String[]{
@@ -111,6 +110,9 @@ public class FilmesUI {
         JOptionPane.showMessageDialog(null, "Filme cadastrado!");
     }
     
+    /**
+     * Atualização de objetos Filme
+     */
     private void atualizarFilme() {
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
@@ -169,7 +171,9 @@ public class FilmesUI {
         }
         JOptionPane.showMessageDialog(null, "Filme atualizado!");
     }
-    
+    /**
+     * Exclusão de objetos Filme
+     */
     private void deletarFilme() {
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
@@ -192,6 +196,9 @@ public class FilmesUI {
         }
     }
     
+    /**
+     * Busca de objetos Filme
+     */
     private void consultarFilmes(String substring) {
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
@@ -213,6 +220,9 @@ public class FilmesUI {
         }
     }
 
+    /**
+     * Listagem de objetos Filme
+     */
     public void listarFilmes() {
         List<Filme> lista = filmes.listar();
         if (lista.isEmpty()) {
@@ -222,6 +232,9 @@ public class FilmesUI {
         JOptionPane.showMessageDialog(null, getFilmesTable());
     }
 
+    /**
+     * Busca por id de objetos Filme
+     */
     public List<String> getFilmesIds() {
         List<Filme> lista = filmes.listar();
         ArrayList<String> rows = new ArrayList<>();
@@ -233,6 +246,9 @@ public class FilmesUI {
         return rows;
     }
 
+    /**
+     * Exclusão de objetos Filme
+     */
     public String getFilmesTable() {
         List<Filme> lista = filmes.listar();
         RowTable header = getHeader();

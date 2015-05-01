@@ -1,6 +1,7 @@
 package dao;
 
 import com.mysql.jdbc.SQLError;
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,11 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import model.Sessao;
 
 /**
  *
- * @author niltonkummer
+ * @author niltonkummer Implementação do Dao Sessão para Mysql
  */
 public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
 
@@ -53,6 +55,8 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
             comando.executeUpdate();
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -64,13 +68,15 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
     public boolean atualizar(Sessao sessao) {
         try {
             String sql = "UPDATE " + tabela + " SET idsala=?, idfilme=?, horario=?, "
-                    + "expiracao=? WHERE "+idtabela+"=?";
+                    + "expiracao=? WHERE " + idtabela + "=?";
             conectar(sql);
             setAllFields(comando, sessao);
             comando.setInt(5, sessao.getId());
             comando.executeUpdate();
             fecharConexao();
             return true;
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -93,6 +99,8 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -115,6 +123,8 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -143,7 +153,7 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
         }
         return listaSessoes;
     }
-    
+
     @Override
     public boolean temSessao() {
         try {
@@ -156,6 +166,8 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DefaultDao.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -181,7 +193,5 @@ public class SessaoDaoMysql extends DefaultDao implements SessaoDao {
                 new Date(resultado.getTimestamp("expiracao").getTime())
         );
     }
-
-
 
 }

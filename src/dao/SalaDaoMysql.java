@@ -1,5 +1,6 @@
 package dao;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import model.Sala;
 
 /**
  *
- * @author niltonkummer
+ * @author niltonkummer Implementação do Dao Sala para Mysql
  */
 public class SalaDaoMysql extends DefaultDao implements SalaDao {
 
@@ -37,6 +38,8 @@ public class SalaDaoMysql extends DefaultDao implements SalaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SalaDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -53,6 +56,8 @@ public class SalaDaoMysql extends DefaultDao implements SalaDao {
             comando.executeUpdate();
             fecharConexao();
             return true;
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (MySQLIntegrityConstraintViolationException e) {
             JOptionPane.showMessageDialog(null, "Sala não pode ser removida pois já existe sessão vinculada");
         } catch (ClassNotFoundException ex) {
@@ -74,6 +79,8 @@ public class SalaDaoMysql extends DefaultDao implements SalaDao {
             comando.executeUpdate();
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SalaDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -95,6 +102,8 @@ public class SalaDaoMysql extends DefaultDao implements SalaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SalaDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
@@ -116,6 +125,8 @@ public class SalaDaoMysql extends DefaultDao implements SalaDao {
             }
             fecharConexao();
 
+        } catch (CommunicationsException ex) {
+            JOptionPane.showMessageDialog(null, "Ocorreu um problema ao conectar com o banco de dados");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SalaDaoMysql.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {

@@ -18,9 +18,11 @@ public class Ingresso {
     private Sessao sessao;
     private Date data;
 
-    // o controle da 
-    // quantidadeAssentos. 
-
+    /**
+     * Instancia um novo objeto Ingresso
+     * @param sessao
+     * @param data 
+     */
     public Ingresso(Sessao sessao, Date data) {
         this.codigo = generateCodigo();
         this.sessao = sessao;

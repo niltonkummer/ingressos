@@ -24,7 +24,7 @@ import view.menu.SalasMenu;
 import view.menu.SessoesMenu;
 
 /**
- *
+ * Contém as informações sobre o Filme e Sala que pertencem ao objeto Sessao 
  * @author niltonkummer
  */
 public class SessaoUI {

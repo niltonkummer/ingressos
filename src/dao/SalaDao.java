@@ -6,6 +6,7 @@ import model.Sala;
 /**
  *
  * @author niltonkummer
+ * Interface Dao para Sala
  */
 public interface SalaDao {
     public void inserir(Sala sala);

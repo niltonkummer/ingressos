@@ -13,12 +13,13 @@ import java.sql.SQLException;
 /**
  *
  * @author niltonkummer
+ * contém os metodos básicos para a conexão e fechamento de conexão 
  */
 public class DefaultDao {
 
     public Connection conexao;
     public PreparedStatement comando;
-
+    
     public void conectar(String sql) throws ClassNotFoundException, SQLException {
         conexao = ConnectionFactory.getConnection();
         comando = conexao.prepareStatement(sql);
