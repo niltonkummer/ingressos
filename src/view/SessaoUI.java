@@ -45,7 +45,7 @@ public class SessaoUI {
             try {
                 opcao = Integer.parseInt(JOptionPane.showInputDialog(SessoesMenu.getOptions()));
             } catch (Exception e) {
-                opcao = SessoesMenu.OP_SAIR;
+                opcao = -1;
             };
 
             switch (opcao) {
@@ -65,6 +65,7 @@ public class SessaoUI {
                     System.out.println("Volta para o menu principal");
                     break;
                 default:
+                    JOptionPane.showMessageDialog(null, "Opção inválida, escolha um número");
                     System.out.println("Opção inválida..");
 
             }

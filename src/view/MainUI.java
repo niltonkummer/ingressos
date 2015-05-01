@@ -43,6 +43,7 @@ public class MainUI {
                     System.out.println("Aplicação finalizada!!!");
                     break;
                 default:
+                    JOptionPane.showMessageDialog(null, "Opção inválida, escolha um número");
                     System.out.println("Opção inválida..");
 
             }
